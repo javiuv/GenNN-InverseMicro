@@ -1,4 +1,4 @@
-from src.architecture import VAE
+from src.architecture.vae import VAE
 from src.training import train_vae, save_checkpoint
 
 import torch

@@ -1,4 +1,4 @@
-# GenNN-InverseMicro: VAE Configuration File for training
+# GenNN-InverseMicro: VAE Configuration File for Inference
 
 learning_rate: 0.01
 num_steps: 1000
