@@ -1,0 +1,3 @@
+# GenNN-InverseMicro: Distortion Operator Configuration File
+
+selected_operator: 'identity'  
