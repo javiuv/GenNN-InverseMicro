@@ -1,0 +1,14 @@
+# GenNN-InverseMicro: VAE Configuration File for training
+
+model_params:
+  input_channels: 1
+  latent_dim: 256
+  hidden_dims: [32, 64, 128, 256]
+  input_size: 64
+
+training_params:
+  batch_size: 64
+  epochs: 100
+  learning_rate: 0.001
+  beta: 0.001  # Beta-VAE weight
+  device: "cuda" # or "cpu"

@@ -1,0 +1,5 @@
+# GenNN-InverseMicro: VAE Configuration File for training
+
+learning_rate: 0.01
+num_steps: 1000
+lambda_reg: 0.01
