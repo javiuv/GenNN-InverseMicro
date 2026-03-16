@@ -15,10 +15,10 @@ def train_vae(
     train_loss, train_recon, train_kl = 0.0, 0.0, 0.0
 
     for batch in dataloader:
-        batch_X = batch[0].to(device, non_blocking=True)
+        batch_X = batch[0].to(device)
         optimizer.zero_grad()
 
-        x_hat, mu, logvar = model(batch_X)
+        x_hat, mu, logvar, z = model(batch_X)
 
         # Loss
         recon_loss = F.binary_cross_entropy(x_hat, batch_X, reduction='sum')

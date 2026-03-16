@@ -12,9 +12,12 @@ def load_config(config_path):
     
 
 def main():
-    config = load_config("vae_training.yaml")
+    config = load_config("_config/vae_training.yaml")
     model_params = config['model_params']
     t_params = config['training_params']
+
+    if isinstance(model_params['hidden_dims'], list) and len(model_params['hidden_dims']) == 1 and isinstance(model_params['hidden_dims'][0], str):
+        model_params['hidden_dims'] = [int(x) for x in model_params['hidden_dims'][0].split()]
 
     device = torch.device(t_params['device'] if torch.cuda.is_available() else "cpu")
     model = VAE(**model_params).to(device)
@@ -29,8 +32,8 @@ def main():
     for epoch in tqdm.tqdm(range(num_epochs)):
         train_vae(model, dataloader, optimizer, beta, device)
         
-        if epoch % 10 == 0:
-            save_checkpoint(model, "checkpoints/vae/", f"vae_epoch_{epoch}.pth")
+        # if epoch % 10 == 0:
+        #     save_checkpoint(model, "checkpoints/vae/", f"vae_epoch_{epoch}.pth")
     
 
 if __name__ == "__main__":
