@@ -13,7 +13,7 @@ class VAE(nn.Module):
         super().__init__()
 
         if hidden_dims is None:
-            hidden_dims = [32, 64, 128, 256]
+            hidden_dims = [32, 64]
 
         self.input_size = input_size
         self.hidden_dims = hidden_dims
@@ -74,7 +74,7 @@ class VAE(nn.Module):
         modules.append(
             nn.Sequential(
                 nn.ConvTranspose2d(
-                    hidden_dims[-1], 
+                    hidden_dims_rev[-1], 
                     input_channels, 
                     kernel_size=3, 
                     stride=2, 
@@ -109,10 +109,10 @@ class VAE(nn.Module):
         x_hat = self.decode(z)
         return x_hat, mu, logvar, z
 
-    def reconstruc(self, x):
+    def reconstruct(self, x):
         x_hat, _, _, _ = self.forward(x)
         return x_hat
     
     def sample(self, n_samples, device):
-        z = torch.randn(n_samples, self.fc_mu.out_features).to(device)
+        z = torch.randn(n_samples, self.fc_mu.out_features, device=device)
         return self.decode(z)
