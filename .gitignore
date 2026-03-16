@@ -1,0 +1,5 @@
+# Ignore training checkpoints
+checkpoints/
+
+# Ignore big model weight files
+models/
