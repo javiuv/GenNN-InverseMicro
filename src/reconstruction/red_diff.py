@@ -2,18 +2,17 @@ import torch
 import torch.nn.functional as F
 
 class REDDIFFReconstructor:
-    def __init__(self, model, diffusion, forward_operator, cfg):
-        self.model = model          # Pretrained denoiser
-        self.diffusion = diffusion  # Alphas from diffusion process
+    def __init__(self, diffusion, forward_operator, cfg):
+        self.diffusion = diffusion  # Pretrained diffusion model
         self.H = forward_operator   # Degradation operator (ej. Blur, Mask)
         self.cfg = cfg              # Config for optimization
     
     def reconstruct(self, y_target, ts):
 
-        n = 1 # Provisional
         mu = self.H.H_pinv(y_target).clone().detach().requires_grad_(True)
         optimizer = torch.optim.Adam([mu], lr=self.cfg['lr'], betas=(0.9, 0.99))
-
+        
+        n = mu.shape[0]
         ss = [-1] + list(ts[:-1])
 
         for ti, si in zip(reversed(ts), reversed(ss)):
@@ -29,7 +28,7 @@ class REDDIFFReconstructor:
             xt = alpha_t.sqrt() * x0_pred_noisy + (1 - alpha_t).sqrt() * noise_xt
             
             # Score estimation
-            et, _ = self.model(xt, t) 
+            et = self.diffusion.model(xt, t).sample 
             et = et.detach()
 
             # Observation loss: ||y_target - H(mu)||²
