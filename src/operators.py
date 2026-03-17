@@ -1,9 +1,35 @@
-def get_forward_operator(cfg):
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-    selected_operator = cfg["selected_operator"]
+class Operator(nn.Module):
+    def __init__(self, operator_type='super_resolution', channels=3, scale_factor=2):
+        super().__init__()
+        self.type = operator_type
+        self.channels = channels
+        self.scale_factor = scale_factor
 
-    if selected_operator == 'identity':
-        def forward_operator(x):
-            return x
-        return forward_operator
-    
+        # Inpainting mask
+        self.register_buffer('mask', torch.ones(1, channels, 1, 1))
+
+    def set_mask(self, mask):
+        self.mask = mask
+
+    def forward(self, x):
+        if self.type == 'inpainting':
+            return x * self.mask
+
+        elif self.type == 'super_resolution':
+            # Downsampling (Average Pooling)
+            return F.interpolate(x, scale_factor=1/self.scale_factor, mode='bicubic', align_corners=False)
+
+        elif self.type == 'blur':
+            pass
+
+    def pinv(self, x):
+        """Pseudo inverse (adjoint operator)"""
+        if self.type == 'inpainting':
+            return x * self.mask
+
+        elif self.type == 'super_resolution':
+            return F.interpolate(x, scale_factor=self.scale_factor, mode='bicubic', align_corners=False) 
