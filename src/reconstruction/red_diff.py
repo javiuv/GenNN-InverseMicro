@@ -38,7 +38,7 @@ class REDDIFFReconstructor:
             xt = alpha_t.sqrt() * x0_pred_noisy + (1 - alpha_t).sqrt() * noise_xt
             
             # Score estimation
-            et = self.diffusion.model(xt, t).sample 
+            et = self.diffusion.score(xt, t)
             et = et.detach()
 
             # Observation loss: ||y_target - H(mu)||²
