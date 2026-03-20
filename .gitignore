@@ -3,3 +3,6 @@ checkpoints/
 
 # Ignore big model weight files
 models/
+
+# Ignore pycache
+__pycache__/
