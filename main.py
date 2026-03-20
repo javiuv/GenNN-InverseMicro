@@ -28,8 +28,11 @@ def run_experiment(img_noisy, method='vae'):
 
         solver = VAELatentReconstructor(model, distortion_operator)
     else:
+        with open("_config/diffusion.yaml", 'r') as f:
+            model_cfg = yaml.safe_load(f)
+
         method = 'red-diff'
-        model = Diffusion()
+        model = Diffusion(**model_cfg)
 
         solver = REDDIFFReconstructor(model, distortion_operator)
 

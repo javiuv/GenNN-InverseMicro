@@ -2,8 +2,8 @@ import torch
 import numpy as np
 
 from diffusers import DDPMScheduler, UNet2DModel
-from guided_diffusion.unet import UNetModel
-from guided_diffusion.scheduler import get_named_beta_schedule
+from .guided_diffusion.scheduler import get_named_beta_schedule
+from .guided_diffusion.script_util import create_model_and_diffusion
 
 class Diffusion():
     """
@@ -18,13 +18,24 @@ class Diffusion():
             self.scheduler = DDPMScheduler.from_pretrained(model_id)
 
         elif model_id == "openai/guided-diffusion-128":
-            # UNet from OpenAI for 128x128
-            self.model = UNetModel(
-                image_size=128, in_channels=3, model_channels=256, out_channels=6,
-                num_res_blocks=2, attention_resolutions=(32, 16, 8),
-                dropout=0, channel_mult=(1, 1, 2, 2, 4, 4), num_heads=4,
-                use_scale_shift_norm=True, resblock_updown=True
-            ).to(self.device)
+            # UNet from OpenAI for 128s
+            self.model, diffusion = create_model_and_diffusion(
+                image_size=128,
+                class_cond=True,            
+                learn_sigma=True,
+                num_channels=256,
+                num_res_blocks=2,
+                channel_mult="1,1,2,2,4,4", 
+                attention_resolutions="32,16,8",
+                num_heads=4,
+                num_head_channels=64,
+                num_heads_upsample=-1,
+                use_scale_shift_norm=True,
+                dropout=0.0,
+                resblock_updown=True,
+                use_fp16=False,
+                use_new_attention_order=False,
+            )
 
             if checkpoint_path:
                 self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
