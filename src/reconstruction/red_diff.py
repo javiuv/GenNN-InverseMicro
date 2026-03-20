@@ -2,17 +2,27 @@ import torch
 import torch.nn.functional as F
 
 class REDDIFFReconstructor:
-    def __init__(self, diffusion, forward_operator, cfg):
+    def __init__(self, diffusion, forward_operator):
         self.diffusion = diffusion  # Pretrained diffusion model
         self.H = forward_operator   # Degradation operator (ej. Blur, Mask)
-        self.cfg = cfg              # Config for optimization
     
-    def reconstruct(self, y_target, ts):
+    def reconstruct(
+            self, 
+            y_target, 
+            lr=0.1, 
+            sigma_x0=0.01, 
+            grad_term_weight=0.5, 
+            obs_weight=0.75,
+            num_steps=500
+        ):
 
         mu = self.H.H_pinv(y_target).clone().detach().requires_grad_(True)
-        optimizer = torch.optim.Adam([mu], lr=self.cfg['lr'], betas=(0.9, 0.99))
-        
+        optimizer = torch.optim.Adam([mu], lr=lr, betas=(0.9, 0.99))
+
         n = mu.shape[0]
+
+        self.diffusion.scheduler.set_timesteps(num_inference_steps=num_steps)
+        ts = list(reversed(self.diffusion.scheduler.timesteps))
         ss = [-1] + list(ts[:-1])
 
         for ti, si in zip(reversed(ts), reversed(ss)):
@@ -24,7 +34,7 @@ class REDDIFFReconstructor:
             noise_xt = torch.randn_like(mu)
             
             # Diffusion process
-            x0_pred_noisy = mu + self.cfg['sigma_x0'] * noise_x0
+            x0_pred_noisy = mu + sigma_x0 * noise_x0
             xt = alpha_t.sqrt() * x0_pred_noisy + (1 - alpha_t).sqrt() * noise_xt
             
             # Score estimation
@@ -39,10 +49,10 @@ class REDDIFFReconstructor:
 
             # SNR weighting
             snr_inv = ((1-alpha_t)/alpha_t).sqrt().mean()
-            w_t = self.cfg['grad_term_weight'] * snr_inv
+            w_t = grad_term_weight * snr_inv
             
             # Final loss
-            loss = w_t * loss_noise + self.cfg['obs_weight'] * loss_obs
+            loss = w_t * loss_noise + obs_weight * loss_obs
             
             optimizer.zero_grad()
             loss.backward()
