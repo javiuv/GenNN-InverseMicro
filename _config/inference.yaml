@@ -1,0 +1,13 @@
+# GenNN-InverseMicro: Configuration File for Inference with Generative Prior
+
+vae:
+  lr: 0.1
+  num_steps: 5000
+  lambda_reg: 0.01
+
+red-diff:
+  lr: 0.1
+  sigma_x0: 0.01
+  grad_term_weight: 0.5
+  obs_weight: 0.75
+  num_steps: 500
