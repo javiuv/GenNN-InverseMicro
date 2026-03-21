@@ -37,7 +37,8 @@ def run_experiment(img_noisy, method='vae'):
         solver = REDDIFFReconstructor(model, distortion_operator)
 
     # Solve
-    img_recon = solver.reconstruct(img_noisy, **recon_cfg[method])
+    with torch.amp.autocast('cuda'):        
+      img_recon = solver.reconstruct(img_noisy, **recon_cfg[method])
 
     # TODO: include metrics and postprocess and save 
 

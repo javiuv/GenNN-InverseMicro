@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+import tqdm
 
 class REDDIFFReconstructor:
     def __init__(self, diffusion, forward_operator):
@@ -16,7 +17,7 @@ class REDDIFFReconstructor:
             num_steps=500
         ):
 
-        mu = self.H.H_pinv(y_target).clone().detach().requires_grad_(True)
+        mu = self.H.pinv(y_target).clone().detach().requires_grad_(True)
         optimizer = torch.optim.Adam([mu], lr=lr, betas=(0.9, 0.99))
 
         n = mu.shape[0]
@@ -25,7 +26,7 @@ class REDDIFFReconstructor:
         ts = list(reversed(self.diffusion.scheduler.timesteps))
         ss = [-1] + list(ts[:-1])
 
-        for ti, si in zip(reversed(ts), reversed(ss)):
+        for ti, si in tqdm.tqdm(zip(reversed(ts), reversed(ss)),total=len(ts)):
             t = torch.full((n,), ti, device=mu.device, dtype=torch.long)
             
             alpha_t = self.diffusion.alpha(t).view(-1, 1, 1, 1)
@@ -38,11 +39,12 @@ class REDDIFFReconstructor:
             xt = alpha_t.sqrt() * x0_pred_noisy + (1 - alpha_t).sqrt() * noise_xt
             
             # Score estimation
-            et = self.diffusion.score(xt, t)
+            with torch.no_grad():
+              et = self.diffusion.score(xt.half(), t.half())
             et = et.detach()
 
             # Observation loss: ||y_target - H(mu)||²
-            loss_obs = F.mse_loss(self.H.H(mu), y_target) / 2
+            loss_obs = F.mse_loss(self.H.forward(mu), y_target) / 2
             
             # RED regularization: <(et - noise_xt), x0>
             loss_noise = torch.mul((et - noise_xt).detach(), x0_pred_noisy).mean()

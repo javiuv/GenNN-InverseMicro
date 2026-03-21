@@ -1,5 +1,5 @@
 # GenNN-InverseMicro: Distortion Operator Configuration File
 
 operator_type: 'super_resolution'  
-channels: 1
-scale_factor: 4
+channels: 3
+scale_factor: 2

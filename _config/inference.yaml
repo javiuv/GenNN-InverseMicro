@@ -9,5 +9,5 @@ red-diff:
   lr: 0.1
   sigma_x0: 0.01
   grad_term_weight: 0.5
-  obs_weight: 0.75
+  obs_weight: 0.25
   num_steps: 500

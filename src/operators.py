@@ -33,7 +33,7 @@ class Operator(nn.Module):
             return x * self.mask
 
         elif self.type == 'super_resolution':
-            return F.interpolate(x, scale_factor=self.scale_factor, mode='bicubic', align_corners=False) 
+            return F.interpolate(x, size=(128, 128), mode='bicubic', align_corners=False)
         
         elif self.type == 'identity':
             return x

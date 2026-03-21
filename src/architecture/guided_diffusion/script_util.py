@@ -1,8 +1,15 @@
+"""
+This code is adapted from: https://github.com/openai/guided-diffusion
+
+MIT License
+Copyright (c) 2021 OpenAI
+"""
+
 import argparse
 import inspect
 
-from . import gaussian_diffusion as gd
-from .respace import SpacedDiffusion, space_timesteps
+# from . import gaussian_diffusion as gd
+# from .respace import SpacedDiffusion, space_timesteps
 from .unet import SuperResModel, UNetModel, EncoderUNetModel
 
 NUM_CLASSES = 1000

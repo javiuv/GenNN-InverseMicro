@@ -2,8 +2,9 @@ import torch
 import numpy as np
 
 from diffusers import DDPMScheduler, UNet2DModel
-from .guided_diffusion.scheduler import get_named_beta_schedule
-from .guided_diffusion.script_util import create_model_and_diffusion
+from .guided_diffusion.unet import UNetModel
+# from .guided_diffusion.scheduler import get_named_beta_schedule
+from .guided_diffusion.script_util import create_model
 
 class Diffusion():
     """
@@ -18,37 +19,43 @@ class Diffusion():
             self.scheduler = DDPMScheduler.from_pretrained(model_id)
 
         elif model_id == "openai/guided-diffusion-128":
-            # UNet from OpenAI for 128s
-            self.model, diffusion = create_model_and_diffusion(
+            # UNet from OpenAI for 128x128
+            self.model = create_model(
                 image_size=128,
                 class_cond=True,            
                 learn_sigma=True,
                 num_channels=256,
                 num_res_blocks=2,
-                channel_mult="1,1,2,2,4,4", 
+                channel_mult="", 
                 attention_resolutions="32,16,8",
                 num_heads=4,
                 num_head_channels=64,
                 num_heads_upsample=-1,
                 use_scale_shift_norm=True,
-                dropout=0.0,
+                dropout=0,
                 resblock_updown=True,
-                use_fp16=False,
+                use_fp16=True,
                 use_new_attention_order=False,
+                use_checkpoint=True,
             )
+
+            self.model.convert_to_fp16()
 
             if checkpoint_path:
                 self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
+                
+            self.model = self.model.to(self.device)
+            # betas = get_named_beta_schedule("linear", 1000)
+            # alphas = 1.0 - betas
+            # alphas_cumprod = torch.from_numpy(np.cumprod(alphas, axis=0)).float()
 
-            betas = get_named_beta_schedule("linear", 1000)
-            alphas = 1.0 - betas
-            alphas_cumprod = torch.from_numpy(np.cumprod(alphas, axis=0)).float()
-
-            class DummyScheduler:
-                def __init__(self, alphas_cumprod):
-                    self.alphas_cumprod = alphas_cumprod            
+            # class DummyScheduler:
+            #     def __init__(self, alphas_cumprod):
+            #         self.alphas_cumprod = alphas_cumprod            
                     
-            self.scheduler = DummyScheduler(alphas_cumprod)
+            # self.scheduler = DummyScheduler(alphas_cumprod)
+            self.scheduler = DDPMScheduler.from_pretrained("google/ddpm-cifar10-32")
+
 
         self.model.eval()
 
@@ -65,6 +72,8 @@ class Diffusion():
             if self.model_id == "google/ddpm-cifar10-32":
                 return self.model(xt, t).sample 
             else:
-                out = self.model(xt, t)            
+                batch_size = xt.shape[0]
+                y_tensor = torch.zeros(batch_size, dtype=torch.long, device=xt.device)
+                out = self.model(xt, t, y=y_tensor).half()            
                 eps, _ = torch.split(out, 3, dim=1)
                 return eps
