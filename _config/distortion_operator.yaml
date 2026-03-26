@@ -1,3 +1,5 @@
 # GenNN-InverseMicro: Distortion Operator Configuration File
 
-selected_operator: 'identity'  
+operator_type: 'super_resolution'  
+channels: 3
+scale_factor: 2
