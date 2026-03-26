@@ -1,5 +1,10 @@
-# Ignore training checkpoints
-checkpoints/
-
-# Ignore big model weight files
+data/
+datasets/
+*.zip
+*.tar
+*.gz
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
 models/
+checkpoints/
