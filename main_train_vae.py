@@ -46,7 +46,8 @@ def main():
     print("Number of training images:", len(dataset))
     
     for epoch in tqdm.tqdm(range(num_epochs)):
-        train_vae(model, dataloader, optimizer, beta, device)
+        train_loss, train_recon, train_kl = train_vae(model, dataloader, optimizer, beta, device)
+        print(f"Epoch {epoch+1}/{num_epochs} | loss={train_loss:.4f} | recon={train_recon:.4f} | kl={train_kl:.4f}")
         
         # if epoch % 10 == 0:
         #     save_checkpoint(model, "checkpoints/vae/", f"vae_epoch_{epoch}.pth")
