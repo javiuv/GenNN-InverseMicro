@@ -1,4 +1,4 @@
-import src.architecture.vae
+from src.architecture.vae import VAE
 from src.training import train_vae, save_checkpoint
 from src.data.dataset import CleanImageDataset
 
@@ -21,7 +21,7 @@ def main():
         model_params['hidden_dims'] = [int(x) for x in model_params['hidden_dims'][0].split()]
 
     device = torch.device(t_params['device'] if torch.cuda.is_available() else "cpu")
-    model = src.architecture.vae.VAE(**model_params).to(device)
+    model = VAE(**model_params).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=t_params['learning_rate'])
 
     beta = t_params['beta']
@@ -32,14 +32,14 @@ def main():
 
     dataset = CleanImageDataset(
         root_dir=data_root,
-        image_size=model_params["img_size"]
+        image_size=96
     )
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=2,
+        num_workers=0,
         pin_memory=True
     )
 
