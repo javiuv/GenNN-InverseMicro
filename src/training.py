@@ -20,8 +20,13 @@ def train_vae(
 
         x_hat, mu, logvar, z = model(batch_X)
 
+        if torch.isnan(x_hat).any():
+            raise ValueError("x_hat contains NaNs")
+        if torch.isnan(batch_X).any():
+            raise ValueError("batch_X contains NaNs")
+
         # Loss
-        recon_loss = F.binary_cross_entropy(x_hat, batch_X, reduction='sum')
+        recon_loss = F.mse_loss(x_hat, batch_X, reduction='sum')
         kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
         current_mse_per_sample = recon_loss.item() / batch_X.size(0)

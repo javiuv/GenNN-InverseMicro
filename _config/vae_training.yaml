@@ -7,7 +7,7 @@ model_params:
   input_size: 96
 
 training_params:
-  batch_size: 64
+  batch_size: 16
   epochs: 100
   learning_rate: 0.001
   beta: 0.001  # Beta-VAE weight
