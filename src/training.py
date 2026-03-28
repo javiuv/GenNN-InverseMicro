@@ -15,7 +15,7 @@ def train_vae(
     train_loss, train_recon, train_kl = 0.0, 0.0, 0.0
 
     for batch in dataloader:
-        batch_X = batch[0].to(device)
+        batch_X = batch.to(device)
         optimizer.zero_grad()
 
         x_hat, mu, logvar, z = model(batch_X)
