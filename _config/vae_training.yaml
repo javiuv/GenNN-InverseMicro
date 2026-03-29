@@ -8,9 +8,9 @@ model_params:
 
 training_params:
   batch_size: 16
-  epochs: 20
+  epochs: 30
   learning_rate: 0.0001
-  beta: 0.00005  # Beta-VAE weight
+  beta: 0.0001 # Beta-VAE weight
   device: "cuda" # or "cpu"
 
 pth_path: "models/vae/best_vae.pth"

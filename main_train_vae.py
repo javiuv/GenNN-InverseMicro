@@ -51,8 +51,8 @@ def main():
 
     print("Number of training images:", len(dataset))
 
-    drive_ckpt_dir = "/content/drive/MyDrive/pcam_project/models/vae/"
-    drive_cfg_dir = "/content/drive/MyDrive/pcam_project/configs/"
+    drive_ckpt_dir = "/content/drive/MyDrive/pcam_project_new/models/vae/"
+    drive_cfg_dir = "/content/drive/MyDrive/pcam_project_new/configs/"
 
     os.makedirs(drive_ckpt_dir, exist_ok=True)
     os.makedirs(drive_cfg_dir, exist_ok=True)
