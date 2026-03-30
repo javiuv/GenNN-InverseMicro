@@ -1,4 +1,4 @@
-# Generative Neural Networks for Inverse Problems in Microscopy
+# From Classic Latent Inference to Modern Diffusion: Comparing VAEs and Red-Diff for Microscopy Reconstruction.
 
 This project explores the use of **generative models as priors** to solve **ill-posed inverse problems** in imaging, with a focus on **microscopy image reconstruction**.
 
