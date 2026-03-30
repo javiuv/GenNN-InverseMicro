@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-
 import os
 
 
@@ -9,32 +8,42 @@ def train_vae(
         dataloader,
         optimizer,
         beta,
-        device        
+        device
 ):
     model.train()
     train_loss, train_recon, train_kl = 0.0, 0.0, 0.0
 
-    for batch in dataloader:
-        batch_X = batch[0].to(device)
+    for batch_idx, batch in enumerate(dataloader):
+        batch_X = batch.to(device)
+
         optimizer.zero_grad()
 
         x_hat, mu, logvar, z = model(batch_X)
 
-        # Loss
-        recon_loss = F.binary_cross_entropy(x_hat, batch_X, reduction='sum')
+        if not torch.isfinite(batch_X).all():
+            raise ValueError(f"Non-finite values found in batch_X at batch {batch_idx}")
+        if not torch.isfinite(x_hat).all():
+            raise ValueError(f"Non-finite values found in x_hat at batch {batch_idx}")
+        if not torch.isfinite(mu).all():
+            raise ValueError(f"Non-finite values found in mu at batch {batch_idx}")
+        if not torch.isfinite(logvar).all():
+            raise ValueError(f"Non-finite values found in logvar at batch {batch_idx}")
+
+        recon_loss = F.mse_loss(x_hat, batch_X, reduction='sum')
         kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-        current_mse_per_sample = recon_loss.item() / batch_X.size(0)
+        if not torch.isfinite(recon_loss):
+            raise ValueError(f"Non-finite recon_loss at batch {batch_idx}")
+        if not torch.isfinite(kl_loss):
+            raise ValueError(f"Non-finite kl_loss at batch {batch_idx}")
 
-        if current_mse_per_sample > 10: # Threshold
-            dynamic_beta = 0.0
-        elif current_mse_per_sample > 3:
-            dynamic_beta = beta * 0.1 # Reduced weight
-        else:
-            dynamic_beta = beta
+        loss = (recon_loss + beta * kl_loss) / batch_X.size(0)
 
-        loss = (recon_loss + dynamic_beta * kl_loss) / batch_X.size(0)
+        if not torch.isfinite(loss):
+            raise ValueError(f"Non-finite total loss at batch {batch_idx}")
+
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
 
         train_loss += loss.item() * batch_X.size(0)
