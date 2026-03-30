@@ -3,3 +3,4 @@
 operator_type: 'super_resolution'  
 channels: 3
 scale_factor: 2
+noise_sigma: 0.3
