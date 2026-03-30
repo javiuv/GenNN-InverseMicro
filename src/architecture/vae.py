@@ -6,9 +6,9 @@ class VAE(nn.Module):
     def __init__(
         self,
         input_channels: int = 1,
-        latent_dim: int = 128,
+        latent_dim: int = 2,
         hidden_dims=None,
-        input_size: int = 64,
+        input_size: int = 28,
     ):
         super().__init__()
 

@@ -1,0 +1,5 @@
+# GenNN-InverseMicro: Configuration File for the Diffusion Models
+
+model_id: "openai/guided-diffusion-128"
+checkpoint_path: "/content/drive/MyDrive/gnn_project/128x128_diffusion.pt"
+device: "cuda"

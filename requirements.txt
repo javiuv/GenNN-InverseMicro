@@ -1,0 +1,7 @@
+blobfile==3.2.0
+diffusers==0.37.0
+mpi4py==4.1.1
+numpy==2.4.3
+PyYAML==6.0.3
+torch==2.10.0
+tqdm==4.67.3

@@ -42,4 +42,4 @@ class VAELatentReconstructor:
             loss.backward()
             optimizer.step()
 
-        return z.detach(), self.model.decode(z).detach()
+        return self.model.decode(z).detach()
