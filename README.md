@@ -6,8 +6,6 @@ We implement and compare:
 - A **Variational Autoencoder (VAE)** baseline using latent space optimization
 - A **diffusion-based prior (RED-Diff)** using a pretrained score-based model
 
-<!-- Developed as part of the *Generative Neural Networks for the Sciences* course (Heidelberg University). -->
-
 
 ## Problem Overview
 
@@ -46,7 +44,8 @@ $$
 - Resolution: **96×96**
 - Adapted to **128×128** for compatibility with pretrained diffusion models
 
-<!-- Dataset images example -->
+<img width="1182" height="312" alt="image" src="https://github.com/user-attachments/assets/b0bd26a5-b83e-41c0-af80-bc96e567570f" />
+
 
 ## Setup
 Install dependencies:
@@ -54,11 +53,3 @@ Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
-<!-- ## Running the code -->
-<!-- Download pretrained checkpoints -->
-<!-- ## Key Findings
-- **Diffusion (RED-Diff)** outperforms VAE-based optimization in preserving high-frequency textures (e.g., cellular membranes).
-- **Latent Space Optimization** is significantly faster but prone to "hallucinations" in out-of-distribution samples. -->
-
-<!-- GIF/Images with results -->
