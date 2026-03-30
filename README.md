@@ -54,3 +54,9 @@ pip install -r requirements.txt
 ```
 ## Models & Results
 This link contains the model checkpoints and result files: [**pcam_project**](https://drive.google.com/drive/folders/1aHvO-CdMjnKrXYbLvoMN5bvZ3HkUhw6o?usp=sharing)
+
+RED-Diff for super resolution with a pretrained model (trained for natural images):
+
+<img width="787" height="427" alt="image" src="https://github.com/user-attachments/assets/369faffb-4d71-462e-8411-10dba57ab867" />
+
+Big structures are correctly reconstructed. However, fine details often found in cellular microscopy imaging are challenging for the model used as a prior. Overall reconstruction is achieved in spite of the domain mismatch.
