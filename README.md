@@ -42,7 +42,6 @@ $$
 
 - Microscopy images from [**PatchCamelyion (PCAM)**](https://github.com/basveeling/pcam) 
 - Resolution: **96×96**
-- Adapted to **128×128** for compatibility with pretrained diffusion models
 
 <img width="1182" height="312" alt="image" src="https://github.com/user-attachments/assets/b0bd26a5-b83e-41c0-af80-bc96e567570f" />
 
